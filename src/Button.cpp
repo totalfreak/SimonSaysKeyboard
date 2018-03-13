@@ -1,8 +1,10 @@
 #include "Arduino.h"
 #include "Led.cpp"
-
+//Button object
 class Button {
 public:
+  Led led;
+  
   Button(int initPin, int ledInitPin) {
     pin = initPin;
     ledPin = ledInitPin;
@@ -51,6 +53,5 @@ public:
 
 private:
   int pin, ledPin;
-  Led led;
   bool activated = false;
 };
