@@ -63,7 +63,9 @@ void loop() {
 void startUpGame() {
   //Generate the led sequence
   genSequence();
+  //Reset level to start level
   level = startLevel;
+  //Waiting a while
   delay(timeDelta*3);
   //Play the sequence
   playSequence();
