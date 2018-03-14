@@ -4,7 +4,9 @@
 class Button {
 public:
   Led led;
-  
+  //Button(ButtonPin, LEDPin)
+  //Constructor
+  //Also creating own LED object
   Button(int initPin, int ledInitPin) {
     pin = initPin;
     ledPin = ledInitPin;
@@ -14,17 +16,19 @@ public:
 
   Button(){};
 
+  //Returning digital value of button press
   int readValue() {
     if(digitalRead(getPin())) {
       return HIGH;
     } else
       return LOW;
   }
-
+  //Setting pin mode
   void setPinMode(int mode) {
     pinMode(getPin(), mode);
   }
 
+  //Activating button, and LED
   void activate() {
     activated = true;
     activateLED();

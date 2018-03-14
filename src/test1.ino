@@ -7,9 +7,9 @@ const int amountOfButtons = 2;
 //LED sequence size
 const int sequenceSize = 100;
 
-//Start level
-int level = 2;
-
+//Level
+int level;
+int startLevel = 2;
 
 /*
 0 = Game initializing;
@@ -35,7 +35,9 @@ Button buttons[amountOfButtons] = {Button(12, 11), Button(13, 10)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
 void setup() {
+  //Seeding random function
   randomSeed(analogRead(0));
+  //Starting game, generating sequence and such
   startUpGame();
 }
 
@@ -61,7 +63,7 @@ void loop() {
 void startUpGame() {
   //Generate the led sequence
   genSequence();
-
+  level = startLevel;
   delay(timeDelta*3);
   //Play the sequence
   playSequence();
@@ -75,22 +77,23 @@ void checkSequence() {
   }
 }
 
+//If the right button pressed
 void rightButton() {
+  //If the sequence was played through, go up on level
   if(playedCounter >= level) {
     upOneLevel();
   } else {
+    //Haven't played through the sequence
     playedCounter++;
   }
 }
 
+//Reset game
 void wrongButton() {
-  genSequence();
-  level = 1;
-  delay(300);
-  playSequence();
+  startUpGame();
 }
 
-
+//Reset playedSequence and increase level by one
 void upOneLevel() {
   for(int i = 0; i < sequenceSize; i++) {
     playedSequence[i] = ledSequence[i];
@@ -110,7 +113,7 @@ void playSequence() {
   }
   gameState = 2;
 }
-
+//Generating the led sequence
 void genSequence() {
   for(int i = 0; i < sequenceSize; i++) {
     int rando = random(0, amountOfButtons);

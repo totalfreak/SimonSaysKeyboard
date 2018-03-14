@@ -2,6 +2,8 @@
 
 class Led {
 public:
+  //Constructor
+  //Setting pin mode and deactivating
   Led(int initPin) {
     pin = initPin;
     pinMode(initPin, OUTPUT);
@@ -23,7 +25,7 @@ public:
     activated = false;
     setValue(activated);
   }
-  
+
   bool getActivated() {
     return activated;
   }
