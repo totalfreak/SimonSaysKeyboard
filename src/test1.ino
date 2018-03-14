@@ -2,7 +2,7 @@
 #include "Button.cpp"
 
 //How many buttons are in game
-const int amountOfButtons = 2;
+const int amountOfButtons = 4;
 
 //LED sequence size
 const int sequenceSize = 100;
@@ -18,6 +18,9 @@ int startLevel = 2;
 */
 int gameState = 0;
 
+//Game loss LED pin;
+int gameLossPin = A5;
+
 //Time between light change
 int timeDelta = 300;
 
@@ -31,10 +34,12 @@ int playedCounter = 0;
 
 //Array containing the buttons
 //                            Button(ButtonPin, LEDPin)
-Button buttons[amountOfButtons] = {Button(12, 11), Button(13, 10)};
+Button buttons[amountOfButtons] = {Button(13, 7), Button(12, 6), Button(11, 5), Button(10, 4)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
 void setup() {
+  scrollThroughColours(100, 5, true);
+  //Serial.begin(9600);
   //Seeding random function
   randomSeed(analogRead(0));
   //Starting game, generating sequence and such
@@ -51,9 +56,10 @@ void loop() {
       } else {
         if(buttons[i].getActivated()) {
           delay(50);
-          playedSequence[playedCounter] = i;
-          checkSequence();
           buttons[i].deActivate();
+          playedSequence[playedCounter] = i;
+          //Serial.println("\nPressed button: " + String(i));
+          pressButton(buttons[i]);
         }
       }
     }
@@ -61,10 +67,16 @@ void loop() {
 }
 
 void startUpGame() {
+
+
+  //Initialize game loss pin
+  pinMode(gameLossPin, OUTPUT);
   //Generate the led sequence
   genSequence();
   //Reset level to start level
   level = startLevel;
+  ////Serial print new game message
+  //Serial.println("\nStarting new game");
   //Waiting a while
   delay(timeDelta*3);
   //Play the sequence
@@ -72,17 +84,25 @@ void startUpGame() {
 }
 
 void checkSequence() {
-  if(playedSequence != ledSequence) {
-    wrongButton();
-  } else {
-    rightButton();
+  for(int i = 0; i < level; i++) {
+    if(playedSequence[i] != ledSequence[i]) {
+      wrongButton();
+      return;
+    }
   }
+  rightButton();
+}
+
+void pressButton(Button button) {
+  checkSequence();
+
 }
 
 //If the right button pressed
 void rightButton() {
   //If the sequence was played through, go up on level
-  if(playedCounter >= level) {
+  if(playedCounter >= level-1) {
+    delay(timeDelta);
     upOneLevel();
   } else {
     //Haven't played through the sequence
@@ -92,7 +112,43 @@ void rightButton() {
 
 //Reset game
 void wrongButton() {
+  loseGame(75, 5);
   startUpGame();
+}
+//Pretty startup colours
+void scrollThroughColours(int speed, int rounds, bool pingpong) {
+  int round = 0;
+  while(round < rounds) {
+    if(!pingpong) {
+      for(int i = 0; i < amountOfButtons; i++) {
+        buttons[i].led.activate();
+        delay(speed);
+        buttons[i].led.deActivate();
+      }
+    } else {
+      for(int i = 0; i < amountOfButtons; i++) {
+        buttons[i].led.activate();
+        delay(speed);
+        buttons[i].led.deActivate();
+      }
+      for(int i = amountOfButtons; i > 0; i--) {
+        buttons[i].led.activate();
+        delay(speed);
+        buttons[i].led.deActivate();
+      }
+    }
+    round++;
+  }
+}
+
+//Blink with loser LED
+void loseGame(int speed, int blinks) {
+  for(int i = 0; i < blinks; i++) {
+    digitalWrite(gameLossPin, HIGH);
+    delay(speed);
+    digitalWrite(gameLossPin, LOW);
+    delay(speed);
+  }
 }
 
 //Reset playedSequence and increase level by one
@@ -100,12 +156,17 @@ void upOneLevel() {
   for(int i = 0; i < sequenceSize; i++) {
     playedSequence[i] = ledSequence[i];
   }
+  playedCounter = 0;
   level++;
   playSequence();
 }
 
 //Play the sequence at the current level
 void playSequence() {
+  //Serial.println("ledSequence");
+  for(int i = 0; i < level; i++) {
+    //Serial.print(ledSequence[i]);
+  }
   gameState = 1;
   for(int i = 0; i < level; i++) {
     buttons[ledSequence[i]].led.activate();
