@@ -1,17 +1,20 @@
 #include "Arduino.h"
 #include "Button.cpp"
 
+//How many buttons are in game
 const int amountOfButtons = 2;
 
+//LED sequence size
 const int sequenceSize = 100;
 
+//Start level
 int level = 2;
 
 
 /*
 0 = Game initializing;
 1 = Playing sequence;
-2 = Accept input
+2 = Accepting input
 */
 int gameState = 0;
 
@@ -21,9 +24,13 @@ int timeDelta = 300;
 //Entire LED sequence
 int ledSequence[sequenceSize];
 
+//The replica sequence that will be modified when buttons are pressed
 int playedSequence[sequenceSize];
+//The counter going through the ledSequence when a right button is pressed
 int playedCounter = 0;
 
+//Array containing the buttons
+//                            Button(ButtonPin, LEDPin)
 Button buttons[amountOfButtons] = {Button(12, 11), Button(13, 10)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
