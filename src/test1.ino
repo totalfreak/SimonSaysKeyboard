@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "NewTone/NewTone.h"
 #include "Button.cpp"
 
 //How many buttons are in game
@@ -19,10 +20,15 @@ int startLevel = 2;
 int gameState = 0;
 
 //Game loss LED pin;
-int gameLossPin = A5;
+int gameLossPin = 2;
+int gameLossFrequency = 200;
+
+//Buzzer pin
+int buzzerPin = 11;
 
 //Time between light change
 int timeDelta = 300;
+
 
 //Entire LED sequence
 int ledSequence[sequenceSize];
@@ -34,11 +40,12 @@ int playedCounter = 0;
 
 //Array containing the buttons
 //                            Button(ButtonPin, LEDPin)
-Button buttons[amountOfButtons] = {Button(13, 7), Button(12, 6), Button(11, 5), Button(10, 4)};
+Button buttons[amountOfButtons] = {Button(10, 6, 400), Button(9, 5, 500), Button(8, 4, 600), Button(7, 3, 700)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
 void setup() {
-  scrollThroughColours(100, 5, true);
+
+  scrollThroughColours(100, 5, false);
   //Serial.begin(9600);
   //Seeding random function
   randomSeed(analogRead(0));
@@ -55,6 +62,7 @@ void loop() {
         buttons[i].activate();
       } else {
         if(buttons[i].getActivated()) {
+          buttons[i].playSound(buzzerPin, timeDelta);
           delay(50);
           buttons[i].deActivate();
           playedSequence[playedCounter] = i;
@@ -67,8 +75,6 @@ void loop() {
 }
 
 void startUpGame() {
-
-
   //Initialize game loss pin
   pinMode(gameLossPin, OUTPUT);
   //Generate the led sequence
@@ -122,17 +128,20 @@ void scrollThroughColours(int speed, int rounds, bool pingpong) {
     if(!pingpong) {
       for(int i = 0; i < amountOfButtons; i++) {
         buttons[i].led.activate();
+        buttons[i].playSound(buzzerPin, timeDelta);
         delay(speed);
         buttons[i].led.deActivate();
       }
     } else {
       for(int i = 0; i < amountOfButtons; i++) {
         buttons[i].led.activate();
+        buttons[i].playSound(buzzerPin, timeDelta);
         delay(speed);
         buttons[i].led.deActivate();
       }
       for(int i = amountOfButtons; i > 0; i--) {
         buttons[i].led.activate();
+        buttons[i].playSound(buzzerPin, timeDelta);
         delay(speed);
         buttons[i].led.deActivate();
       }
@@ -145,8 +154,10 @@ void scrollThroughColours(int speed, int rounds, bool pingpong) {
 void loseGame(int speed, int blinks) {
   for(int i = 0; i < blinks; i++) {
     digitalWrite(gameLossPin, HIGH);
+    NewTone(buzzerPin, gameLossFrequency, timeDelta/4);
     delay(speed);
     digitalWrite(gameLossPin, LOW);
+    NewTone(buzzerPin, gameLossFrequency, timeDelta/4);
     delay(speed);
   }
 }
@@ -170,6 +181,7 @@ void playSequence() {
   gameState = 1;
   for(int i = 0; i < level; i++) {
     buttons[ledSequence[i]].led.activate();
+    buttons[ledSequence[i]].playSound(buzzerPin, timeDelta);
     delay(timeDelta);
     buttons[ledSequence[i]].led.deActivate();
     delay(timeDelta);

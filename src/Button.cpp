@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "NewTone/NewTone.h"
 #include "Led.cpp"
 //Button object
 class Button {
@@ -7,9 +8,10 @@ public:
   //Button(ButtonPin, LEDPin)
   //Constructor
   //Also creating own LED object
-  Button(int initPin, int ledInitPin) {
+  Button(int initPin, int ledInitPin, int initMelody) {
     pin = initPin;
     ledPin = ledInitPin;
+    melody = initMelody;
     setPinMode(INPUT_PULLUP);
     led = Led(ledPin);
   }
@@ -23,6 +25,12 @@ public:
     } else
       return LOW;
   }
+
+  //Playing my sound
+  void playSound(int buzzerPin, int duration) {
+    NewTone(buzzerPin, melody, duration);
+  }
+
   //Setting pin mode
   void setPinMode(int mode) {
     pinMode(getPin(), mode);
@@ -56,6 +64,6 @@ public:
   }
 
 private:
-  int pin, ledPin;
+  int pin, ledPin, melody;
   bool activated = false;
 };
