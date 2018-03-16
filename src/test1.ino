@@ -165,7 +165,7 @@ void upOneLevel() {
 void playSequence() {
   //Serial.println("ledSequence");
   for(int i = 0; i < level; i++) {
-    //Serial.print(ledSequence[i]);
+    //Serial.print(String(ledSequence[i]) + " ");
   }
   gameState = 1;
   for(int i = 0; i < level; i++) {
