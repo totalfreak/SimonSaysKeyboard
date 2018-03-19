@@ -20,7 +20,7 @@ int level;
 int startLevel = 2;
 
 //Highscore
-HighScore highscores[100];
+HighScore highscores[sequenceSize];
 
 //EEPROM variables
 int addr = 0;
@@ -176,11 +176,18 @@ void loseGame(int speed, int blinks) {
     delay(speed);
   }
 }
-
+//Read and save highscores in highscores array
 void readHighscores() {
   int romSize = (int) EEPROM.length();
   for(int i = 0; i < romSize; i += sizeof(byte)) {
     EEPROM.get(i, highscores[i]);
+  }
+}
+
+void evaluateScore() {
+  readHighscores();
+  for(int i = 0; i < sequenceSize; i++) {
+    //Make loop that goes through highscores
   }
 }
 
