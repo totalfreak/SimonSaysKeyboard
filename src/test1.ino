@@ -3,6 +3,12 @@
 #include <EEPROM.h>
 #include "Button.cpp"
 
+
+struct HighScore {
+  byte score;
+  char name[3];
+};
+
 //How many buttons are in game
 const int amountOfButtons = 4;
 
@@ -14,7 +20,7 @@ int level;
 int startLevel = 2;
 
 //Highscore
-byte highscores[100];
+HighScore highscores[100];
 
 //EEPROM variables
 int addr = 0;
@@ -172,8 +178,9 @@ void loseGame(int speed, int blinks) {
 }
 
 void readHighscores() {
-  for(int i = 0; i < EEPROM.length(); i++) {
-
+  int romSize = (int) EEPROM.length();
+  for(int i = 0; i < romSize; i += sizeof(byte)) {
+    EEPROM.get(i, highscores[i]);
   }
 }
 
