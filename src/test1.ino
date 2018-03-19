@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "NewTone/NewTone.h"
+#include <EEPROM.h>
 #include "Button.cpp"
 
 //How many buttons are in game
@@ -12,10 +13,18 @@ const int sequenceSize = 100;
 int level;
 int startLevel = 2;
 
+//Highscore
+byte highscores[100];
+
+//EEPROM variables
+int addr = 0;
+byte score;
+
 /*
 0 = Game initializing;
 1 = Playing sequence;
-2 = Accepting input
+2 = Accepting input;
+3 = Entering highscore name;
 */
 int gameState = 0;
 
@@ -159,6 +168,12 @@ void loseGame(int speed, int blinks) {
     digitalWrite(gameLossPin, LOW);
     NewTone(buzzerPin, gameLossFrequency, timeDelta/4);
     delay(speed);
+  }
+}
+
+void readHighscores() {
+  for(int i = 0; i < EEPROM.length(); i++) {
+
   }
 }
 
