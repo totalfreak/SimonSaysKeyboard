@@ -162,7 +162,7 @@ void startUpGame() {
   //Serial.println("\nStarting new game");
   //Waiting a while
   delay(timeDelta*3);
-  
+
   //Displaying the highest score
   displayHighestScore();
 
@@ -273,6 +273,7 @@ void evaluateScore() {
       }
       i = amountOfHighscores;
       writeHighscores();
+      displayHighestScore();
       break;
     }
   }
@@ -303,27 +304,31 @@ while(!takeName) {
           if(alphabetSelector1 > alphabetSize) {
             alphabetSelector1 = 0;
           }
-        }
+        } else
         if (i == 1) {
           alphabetSelector2++;
           if(alphabetSelector2 > alphabetSize) {
             alphabetSelector2 = 0;
           }
-        }
+        } else
         if (i == 2) {
           alphabetSelector3++;
           if(alphabetSelector3 > alphabetSize) {
             alphabetSelector3 = 0;
           }
         }
-        if(i == amountOfButtons-1) {
-          takeName = true;
-        }
+
         buttons[i].deActivate();
         enteredName[0] = alphabet[alphabetSelector1];
         enteredName[1] = alphabet[alphabetSelector2];
         enteredName[2] = alphabet[alphabetSelector3];
         enteredName[3] = '\0';
+        if(i == amountOfButtons-1) {
+          takeName = true;
+          alphabetSelector1 = 0;
+          alphabetSelector2 = 0;
+          alphabetSelector3 = 0;
+        }
         displayEnterName();
       }
     }
