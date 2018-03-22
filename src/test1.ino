@@ -280,59 +280,34 @@ void evaluateScore() {
 }
 
 void enterName() {
-displayEnterName();
-bool takeName = false;
-Serial.println("Enter a name: ");
-while(!takeName) {
-  if(!buttons[amountOfButtons-1].readValue()) {
-    buttons[amountOfButtons-1].activate();
-  } else {
-    if(buttons[amountOfButtons-1].getActivated()) {
-      takeName = true;
-      buttons[amountOfButtons-1].deActivate();
-      //Hardcoded name here, make enter name LCD here.
+  displayEnterName();
+  bool takeName = false;
+  Serial.println("Enter a name: ");
+  while(!takeName) {
+    for(int i = 0; i < amountOfButtons; i++) {
+      if(!buttons[i].readValue()) {
+        buttons[i].activate();
+      } else {
+        if(buttons[i].getActivated()) {
+            (i == 0 && alphabetSelector1 > alphabetSize) ? alphabetSelector1=0:alphabetSelector1++;
+            (i == 1 && alphabetSelector2 > alphabetSize) ? alphabetSelector2=0:alphabetSelector2++;
+            (i == 2 && alphabetSelector3 > alphabetSize) ? alphabetSelector3=0:alphabetSelector3++;
 
-    }
-  }
-  for(int i = 0; i < amountOfButtons; i++) {
-    if(!buttons[i].readValue()) {
-      buttons[i].activate();
-    } else {
-      if(buttons[i].getActivated()) {
-        if (i == 0) {
-          alphabetSelector1++;
-          if(alphabetSelector1 > alphabetSize) {
+          buttons[i].deActivate();
+          enteredName[0] = alphabet[alphabetSelector1];
+          enteredName[1] = alphabet[alphabetSelector2];
+          enteredName[2] = alphabet[alphabetSelector3];
+          enteredName[3] = '\0';
+          if(i == amountOfButtons-1) {
+            takeName = true;
             alphabetSelector1 = 0;
-          }
-        } else
-        if (i == 1) {
-          alphabetSelector2++;
-          if(alphabetSelector2 > alphabetSize) {
             alphabetSelector2 = 0;
-          }
-        } else
-        if (i == 2) {
-          alphabetSelector3++;
-          if(alphabetSelector3 > alphabetSize) {
             alphabetSelector3 = 0;
           }
+          displayEnterName();
         }
-
-        buttons[i].deActivate();
-        enteredName[0] = alphabet[alphabetSelector1];
-        enteredName[1] = alphabet[alphabetSelector2];
-        enteredName[2] = alphabet[alphabetSelector3];
-        enteredName[3] = '\0';
-        if(i == amountOfButtons-1) {
-          takeName = true;
-          alphabetSelector1 = 0;
-          alphabetSelector2 = 0;
-          alphabetSelector3 = 0;
-        }
-        displayEnterName();
       }
     }
-  }
   }
 }
 
