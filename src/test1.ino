@@ -18,16 +18,15 @@ const int sequenceSize = 100;
 
 //Level
 int level;
-int startLevel = 2;
+int startLevel = 1;
 int levelWhenWon = 10000;
 bool firstButtonClick = false;
+int millisDiff = 0;
+int highScoreDisplay = 0;
 
 //Highscore
 HighScore highscores[10];
 
-//EEPROM variables
-int addr = 0;
-byte score;
 
 int amountOfHighscores = 10;
 char enteredName[4] = {'A', 'A', 'A', '\0'};
@@ -68,7 +67,7 @@ int playedCounter = 0;
 Button buttons[amountOfButtons] = {Button(10, 6, 440), Button(9, 5, 880), Button(8, 4, 1320), Button(7, 3, 1760)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
-//LCD STUFF
+//LCD STUFF         (RS,E,D4,D5,D6,D7)
 LiquidCrystal lcd(31, 33, 35, 37, 39, 41);
 
 void setup() {
@@ -93,6 +92,7 @@ void setup() {
 
   //Starting LCD
   lcd.begin(16, 2);
+  lcd.clear();
   lcd.setCursor(3, 0);
   lcd.print("Welcome to");
   delay(timeDelta*2);
@@ -110,9 +110,15 @@ void setup() {
 }
 
 void loop() {
-  if(gameState == 1) {
-
-  };
+  if(!firstButtonClick) {
+    if(millis() - millisDiff > 2000) {
+      millisDiff = millis();
+      if(highScoreDisplay < amountOfHighscores) {
+        displayHighScore(highScoreDisplay);
+        highScoreDisplay++;
+      }
+    }
+  }
   //If in input state
   if(gameState == 2) {
     //Going over every button and activating LED when it is pressed
@@ -139,6 +145,7 @@ void loop() {
 
 void startUpGame() {
   firstButtonClick = false;
+  highScoreDisplay = 0;
   //Initialize game loss pin
   pinMode(gameLossPin, OUTPUT);
   //Generate the led sequence
@@ -157,9 +164,6 @@ void startUpGame() {
   //Serial.println("\nStarting new game");
   //Waiting a while
   delay(timeDelta*3);
-
-  //Displaying the highest score
-  displayHighestScore();
 
   //Play the sequence
   playSequence();
@@ -184,7 +188,7 @@ void pressButton(Button button) {
 void rightButton() {
   //If the sequence was played through, go up on level
   if(playedCounter >= level-1) {
-    delay(timeDelta);
+    delay(timeDelta*2);
     upOneLevel();
   } else {
     //Haven't played through the sequence
@@ -238,6 +242,9 @@ void loseGame(int speed, int blinks) {
   levelWhenWon = level;
   evaluateScore();
   gameState = 1;
+  highScoreDisplay = 0;
+  playedCounter = 0;
+  firstButtonClick = false;
   startUpGame();
 }
 
@@ -268,7 +275,7 @@ void evaluateScore() {
       }
       i = amountOfHighscores;
       writeHighscores();
-      displayHighestScore();
+      displayHighScore(0);
       break;
     }
   }
@@ -284,10 +291,24 @@ void enterName() {
         buttons[i].activate();
       } else {
         if(buttons[i].getActivated()) {
-            (i == 0 && alphabetSelector1 > alphabetSize) ? alphabetSelector1=0:alphabetSelector1++;
-            (i == 1 && alphabetSelector2 > alphabetSize) ? alphabetSelector2=0:alphabetSelector2++;
-            (i == 2 && alphabetSelector3 > alphabetSize) ? alphabetSelector3=0:alphabetSelector3++;
-
+          if(i == 0) {
+            alphabetSelector1++;
+            if(alphabetSelector1 > alphabetSize) {
+              alphabetSelector1 = 0;
+            }
+          }
+          if(i == 1) {
+            alphabetSelector2++;
+            if(alphabetSelector2 > alphabetSize) {
+              alphabetSelector2 = 0;
+            }
+          }
+          if(i == 2) {
+            alphabetSelector3++;
+            if(alphabetSelector3 > alphabetSize) {
+              alphabetSelector3 = 0;
+            }
+          }
           buttons[i].deActivate();
           enteredName[0] = alphabet[alphabetSelector1];
           enteredName[1] = alphabet[alphabetSelector2];
@@ -316,18 +337,18 @@ void displayEnterName() {
 
 void displayLevel() {
   lcd.clear();
-  lcd.setCursor(4, 0);
+  lcd.setCursor(5, 0);
   lcd.print("LEVEL");
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print(String(level));
 }
 
-void displayHighestScore() {
+void displayHighScore(int i) {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Highscore " + String(highscores[0].score));
+  lcd.print(String(i+1) + ". Highscore " + String(highscores[i].score));
   lcd.setCursor(0, 1);
-  lcd.print("By " + String(highscores[0].name));
+  lcd.print("By " + String(highscores[i].name));
 }
 
 
