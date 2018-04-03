@@ -65,11 +65,10 @@ int playedCounter = 0;
 
 //Array containing the buttons
 //                            Button(ButtonPin, LEDPin)
-Button buttons[amountOfButtons] = {Button(10, 6, 400), Button(9, 5, 500), Button(8, 4, 600), Button(7, 3, 700)};
+Button buttons[amountOfButtons] = {Button(10, 6, 440), Button(9, 5, 880), Button(8, 4, 1320), Button(7, 3, 1760)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
 //LCD STUFF
-
 LiquidCrystal lcd(31, 33, 35, 37, 39, 41);
 
 void setup() {
@@ -136,10 +135,6 @@ void loop() {
       }
     }
   }
-
-  if(gameState == 3) {
-
-  };
 }
 
 void startUpGame() {
