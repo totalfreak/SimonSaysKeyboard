@@ -11,7 +11,7 @@ struct HighScore {
 };
 
 //How many buttons are in game
-const int amountOfButtons = 4;
+const int amountOfButtons = 7;
 
 //LED sequence size
 const int sequenceSize = 100;
@@ -44,11 +44,11 @@ int alphabetSelector1 = 0, alphabetSelector2 = 0, alphabetSelector3 = 0;
 int gameState = 0;
 
 //Game loss LED pin;
-int gameLossPin = 2;
+int gameLossPin = 37;
 int gameLossFrequency = 200;
 
 //Buzzer pin
-int buzzerPin = 11;
+int buzzerPin = 36;
 
 //Time between light change
 int timeDelta = 300;
@@ -56,6 +56,8 @@ int timeDelta = 300;
 
 //Entire LED sequence
 int ledSequence[sequenceSize];
+//Mister Jacob
+int sequence1[sequenceSize] = {0, 1, 2, 0, 0, 1, 2, 0, 2, 3, 4, 2, 3, 4, 4, 5, 4, 3, 2, 0, 4, 5, 4, 3, 2, 0, 0, 4, 0, 0, 4, 0};
 
 //The replica sequence that will be modified when buttons are pressed
 int playedSequence[sequenceSize];
@@ -64,11 +66,12 @@ int playedCounter = 0;
 
 //Array containing the buttons
 //                            Button(ButtonPin, LEDPin)
-Button buttons[amountOfButtons] = {Button(10, 6, 440), Button(9, 5, 880), Button(8, 4, 1320), Button(7, 3, 1760)};
+//                                              C                     D                       E                       F                       G                       A                     H
+Button buttons[amountOfButtons] = {Button(52, 53, 261.63), Button(50, 51, 293.67), Button(48, 49, 329.63), Button(46, 47, 349.23), Button(44, 45, 392.00), Button(42, 43, 440), Button(40, 41, 493.88)};
 //Button buttons = {button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11, button12};
 
 //LCD STUFF         (RS,E,D4,D5,D6,D7)
-LiquidCrystal lcd(31, 33, 35, 37, 39, 41);
+LiquidCrystal lcd(22, 24, 26, 28, 30, 32);
 
 void setup() {
   Serial.begin(9600);
@@ -384,10 +387,6 @@ void upOneLevel() {
 
 //Play the sequence at the current level
 void playSequence() {
-  //Serial.println("ledSequence");
-  for(int i = 0; i < level; i++) {
-    //Serial.print(String(ledSequence[i]) + " ");
-  }
   gameState = 1;
   for(int i = 0; i < level; i++) {
     buttons[ledSequence[i]].led.activate();
