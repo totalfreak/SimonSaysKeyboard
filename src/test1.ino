@@ -274,7 +274,7 @@ void evaluateScore() {
       highscores[i-1].score = levelWhenWon;
       Serial.println("Winner, winner, chicken dinner: " + String(highscores[i].name) + " " + String(highscores[i].score));
       for(int j = i; j < amountOfHighscores; j++) {
-        highscores[j+2] = highscores[j+1];
+        highscores[j+1] = highscores[j+2];
       }
       i = amountOfHighscores;
       writeHighscores();
@@ -333,7 +333,7 @@ void enterName() {
 void displayEnterName() {
   lcd.setCursor(0, 0);
   lcd.clear();
-  lcd.print("Enter you name");
+  lcd.print("Enter your name");
   lcd.setCursor(0, 1);
   lcd.print(String(enteredName));
 }
