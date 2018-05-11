@@ -137,6 +137,7 @@ void loop() {
           buttons[i].playSound(buzzerPin, timeDelta);
           delay(50);
           buttons[i].deActivate();
+          delay(20);
           playedSequence[playedCounter] = i;
           //Serial.println("\nPressed button: " + String(i));
           pressButton(buttons[i]);
