@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include "Button.cpp"
 #include <LiquidCrystal.h>
+#include <../lib/Entropy.h>
 
 
 struct HighScore {
@@ -27,7 +28,6 @@ int highScoreDisplay = 0;
 //Highscore
 HighScore highscores[10];
 
-
 int amountOfHighscores = 10;
 char enteredName[4] = {'A', 'A', 'A', '\0'};
 char alphabet[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
@@ -44,7 +44,7 @@ int alphabetSelector1 = 0, alphabetSelector2 = 0, alphabetSelector3 = 0;
 int gameState = 0;
 
 //Game loss LED pin;
-int gameLossPin = 37;
+int gameLossPin = 34;
 int gameLossFrequency = 200;
 
 //Buzzer pin
@@ -115,13 +115,14 @@ void setup() {
 void loop() {
   if(!firstButtonClick) {
     if(millis() - millisDiff > 2000) {
-      millisDiff = (unsigned long) millis();
+
       if(highScoreDisplay < amountOfHighscores) {
         displayHighScore(highScoreDisplay);
         highScoreDisplay++;
       } else {
         highScoreDisplay = 0;
       }
+      millisDiff = (unsigned long) millis();
     }
   }
   //If in input state
@@ -275,7 +276,6 @@ void evaluateScore() {
       highscores[i-1].name[3] = enteredName[3];
       //strcpy(highscores[i].name, enteredName);
       highscores[i-1].score = levelWhenWon;
-      Serial.println("Winner, winner, chicken dinner: " + String(highscores[i].name) + " " + String(highscores[i].score));
       for(int j = i; j < amountOfHighscores; j++) {
         highscores[j+1] = highscores[j+2];
       }
@@ -356,7 +356,6 @@ void displayHighScore(int i) {
   lcd.setCursor(0, 1);
   lcd.print("By " + String(highscores[i].name));
   millisDiff = (unsigned long) millis();
-  Serial.println(String(i+1) + ". Highscore " + String(highscores[i].score));
 }
 
 
@@ -409,4 +408,5 @@ void genSequence() {
     ledSequence[i] = rando;
     playedSequence[i] = rando;
   }
+  Serial.println(ledSequence[0]);
 }
