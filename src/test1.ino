@@ -21,7 +21,7 @@ int level;
 int startLevel = 1;
 int levelWhenWon = 10000;
 bool firstButtonClick = false;
-int millisDiff = 0;
+unsigned long millisDiff = 0;
 int highScoreDisplay = 0;
 
 //Highscore
@@ -76,7 +76,7 @@ LiquidCrystal lcd(22, 24, 26, 28, 30, 32);
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    ; // wait for serial port to connect.
   }
   for(int i = 0; i < amountOfHighscores; i++) {
     highscores[i].score = 2;
@@ -115,13 +115,12 @@ void setup() {
 void loop() {
   if(!firstButtonClick) {
     if(millis() - millisDiff > 2000) {
-      millisDiff = millis();
+      millisDiff = (unsigned long) millis();
       if(highScoreDisplay < amountOfHighscores) {
         displayHighScore(highScoreDisplay);
         highScoreDisplay++;
       } else {
         highScoreDisplay = 0;
-        displayHighScore(highScoreDisplay);
       }
     }
   }
@@ -356,7 +355,8 @@ void displayHighScore(int i) {
   lcd.print(String(i+1) + ". Highscore " + String(highscores[i].score));
   lcd.setCursor(0, 1);
   lcd.print("By " + String(highscores[i].name));
-  millisDiff = millis();
+  millisDiff = (unsigned long) millis();
+  Serial.println(String(i+1) + ". Highscore " + String(highscores[i].score));
 }
 
 
