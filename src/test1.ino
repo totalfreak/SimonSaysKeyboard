@@ -119,6 +119,9 @@ void loop() {
       if(highScoreDisplay < amountOfHighscores) {
         displayHighScore(highScoreDisplay);
         highScoreDisplay++;
+      } else {
+        highScoreDisplay = 0;
+        displayHighScore(highScoreDisplay);
       }
     }
   }
@@ -140,7 +143,7 @@ void loop() {
           delay(20);
           playedSequence[playedCounter] = i;
           //Serial.println("\nPressed button: " + String(i));
-          pressButton(buttons[i]);
+          pressButton();
         }
       }
     }
@@ -184,7 +187,7 @@ void checkSequence() {
   rightButton();
 }
 
-void pressButton(Button button) {
+void pressButton() {
   checkSequence();
 }
 
@@ -353,6 +356,7 @@ void displayHighScore(int i) {
   lcd.print(String(i+1) + ". Highscore " + String(highscores[i].score));
   lcd.setCursor(0, 1);
   lcd.print("By " + String(highscores[i].name));
+  millisDiff = millis();
 }
 
 
